@@ -1,0 +1,285 @@
+package com.stockAcc.Master;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+import org.eclipse.jdt.internal.compiler.batch.Main;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.server.browserlaunchers.Sleeper;
+import org.openqa.selenium.support.ui.Select;
+
+public class ERP_StockMaster {
+	public static WebDriver driver;
+	public static String expVal,actVal;
+	public static String prPath="D:\\ERP_StockAccounting\\Stock_Accounting\\src\\com\\stockAcc\\properties\\ERP_stockAcc.properties";
+	public static FileInputStream fi;
+	public static Properties pr;
+	
+	/*
+	 * Method Name:stock_Launch
+	 * Function:Launch the Application
+	 * Author:D.NagaRani
+	 * Creation Date:1/10/2016
+	 */
+	public String stock_Launch(String strBr,String strUrl) throws IOException
+
+	{
+		fi = new FileInputStream(prPath);
+		pr = new Properties();
+		pr.load(fi);
+		expVal="Login";
+		if(strBr.equalsIgnoreCase("firefox"))
+				{
+			driver=new FirefoxDriver();
+				}
+		else if (strBr.equalsIgnoreCase("chrome")) {
+			System.setProperty("webdriver.chrome.driver", "D:\\ERP_StockAccounting\\Stock_Accounting\\src\\com\\stockAcc\\Jars\\chromedriver.exe");
+			driver=new ChromeDriver();
+			
+		} else if(strBr.equalsIgnoreCase("ie")) {
+			System.setProperty("webdriver.ie.driver", "D:\\ERP_StockAccounting\\Stock_Accounting\\src\\com\\stockAcc\\Jars\\IEDriverServer.exe");
+			driver=new InternetExplorerDriver();
+
+		}
+		else {
+			System.out.println("Enter valid Browser: 1.Firefox 2.Chrome 3.IE");
+		}
+		
+		driver.manage().timeouts().implicitlyWait(40, TimeUnit.SECONDS);
+		driver.get(strUrl);
+		driver.manage().window().maximize();
+		actVal=driver.findElement(By.id(pr.getProperty("LoginBtn"))).getText();
+		
+		if(actVal.equalsIgnoreCase(expVal)){
+			return "pass";
+		}
+		else{
+			return "Fail";
+		}
+	}
+	
+	public static void main(String[] args) throws IOException, InterruptedException {
+		ERP_StockMaster e = new ERP_StockMaster();
+		
+		String launch=e.stock_Launch("firefox", "http://webapp.qedgetech.com");
+		String login=e.stock_Login("admin", "master");
+		
+		//String stkcatcreate = e.stock_Category_Creation("add");
+		//String UOM = e.stock_Unit_Of_Measure("9000", "Selenium@OJT");
+		//String sic = e.stock_Item_Creation("makeup", "11111", "telephones", "344", "2000", "5000", "TeleBills");
+		e.stock_Supplier_Creation("mercury", "ohio", "conneticut", "US", "Bing", "123235345", "bing@!gmail.com", "643674567", "friends");
+		String logout=e.stock_Logout();
+		e.stock_Close();
+		
+		System.out.println(launch+"-"+login+"-"+logout);
+		//System.out.println(sic);
+	}
+	
+	/*
+	 * Login in to Application
+	 */
+	public static String stock_Login(String strUname,String strPwd)
+	{
+		expVal="Administrator";
+		
+		WebElement un=driver.findElement(By.id(pr.getProperty("uname")));
+		un.clear();
+		un.sendKeys(strUname);
+		
+		WebElement pw=driver.findElement(By.id(pr.getProperty("pword")));
+		pw.clear();
+		pw.sendKeys(strPwd);
+		
+		driver.findElement(By.id(pr.getProperty("LoginBtn"))).click();
+		actVal=driver.findElement(By.xpath(".//*[@id='msUserName']/font/strong")).getText();
+		if (actVal.equalsIgnoreCase(expVal)) {
+			return "Pass";
+		}
+		else
+		{
+			return "Fail";
+		}
+	}
+	
+	/*
+	 * Method Name:stock_Logout
+	 */
+	public static String stock_Logout() throws InterruptedException{
+		expVal="Login";
+		
+		driver.findElement(By.linkText("Dashboard")).click();
+		driver.findElement(By.id(pr.getProperty("logout"))).click();
+		driver.findElement(By.xpath(pr.getProperty("LogoutConfirmOk"))).click();
+		 Thread.sleep(4000);
+        actVal=driver.findElement(By.id(pr.getProperty("LoginBtn"))).getText();
+		
+		if(actVal.equalsIgnoreCase(expVal)){
+			return "pass";
+		}
+		else{
+			return "Fail";
+		}
+	}
+	/*
+	 * Method Name:stock_Close
+	 */
+	public static void stock_Close(){
+
+		driver.close();
+	}
+    /*
+     * Method Name:stock_Category_Creation
+     */
+    public static String stock_Category_Creation(String strCatName) throws InterruptedException{
+    	expVal="Add succeeded";
+    	WebElement stkitem = driver.findElement(By.linkText(pr.getProperty("StkItem")));
+    	
+    	Actions act = new Actions(driver);
+    	act.moveToElement(stkitem).build().perform();
+    	
+    	driver.findElement(By.linkText(pr.getProperty("StkCat"))).click();
+    	driver.findElement(By.xpath(pr.getProperty("add"))).click();
+    	driver.findElement(By.id(pr.getProperty("CategoryName"))).sendKeys(strCatName);
+    	
+    	driver.findElement(By.id(pr.getProperty("AddCategory"))).click();
+    	driver.findElement(By.xpath(pr.getProperty("OkBtn"))).click();
+    	
+    	    	    	
+    	actVal=driver.findElement(By.xpath(pr.getProperty("success"))).getText();
+    	
+    	driver.findElement(By.xpath(pr.getProperty("OkBtn"))).click();
+    	
+    	if (actVal.equalsIgnoreCase(expVal)) {
+			return "Pass";
+		}
+    	
+    	else{
+    		return "Fail";
+    	}
+    }
+    
+    /*
+     * Method Name:stock_Unit_Of_Measure
+     */
+    public static String stock_Unit_Of_Measure(String strUOMID,String strUOMDesc){
+    	WebElement uom = driver.findElement(By.linkText(pr.getProperty("StkItem")));
+    	expVal="Add succeeded";
+    	
+    	Actions act = new Actions(driver);
+    	act.moveToElement(uom).build().perform();
+    	
+    	driver.findElement(By.linkText(pr.getProperty("UoM"))).click();
+    	driver.findElement(By.xpath(pr.getProperty("AddOfUom"))).click();
+    	
+    	driver.findElement(By.id(pr.getProperty("UOMID"))).sendKeys(strUOMID);
+    	driver.findElement(By.id(pr.getProperty("UOMDesc"))).sendKeys(strUOMDesc);
+    	
+    	driver.findElement(By.id(pr.getProperty("AddCategory"))).click();
+    	driver.findElement(By.xpath(pr.getProperty("OkBtn"))).click();
+    	
+    	actVal=driver.findElement(By.xpath(pr.getProperty("success"))).getText();
+    	driver.findElement(By.xpath(pr.getProperty("OkBtn"))).click();
+    	
+    	if (actVal.equalsIgnoreCase(expVal)) {
+			return "Pass";
+		}
+    	
+    	else{
+    		return "Fail";
+    	}
+    }
+    
+    /*
+     * Method Name:stock_Item_Creation
+     */
+    public static String stock_Item_Creation(String strCate,String strSupNo,String strSuppName,String strUOM,String strpp,String strsp,String strnotes) throws InterruptedException{
+    	expVal="Add succeeded";
+    	
+    	driver.findElement(By.linkText(pr.getProperty("StkItem"))).click();
+    	driver.findElement(By.xpath(pr.getProperty("AddOfUom"))).click();
+    	
+    	driver.findElement(By.id(pr.getProperty("Cate"))).click();
+    	//Thread.sleep(2000);
+    	Select catlist = new Select(driver.findElement(By.id(pr.getProperty("Cate"))));
+    	catlist.selectByVisibleText(strCate);
+    	//Sleeper.sleepTightInSeconds(2);
+    	
+    	driver.findElement(By.id(pr.getProperty("SuppNo"))).click();
+    	Select suplist = new Select(driver.findElement(By.id(pr.getProperty("SuppNo"))));
+    	suplist.selectByVisibleText(strSupNo);
+    	
+    	//Sleeper.sleepTightInSeconds(2);
+    	
+    	driver.findElement(By.id(pr.getProperty("StockName"))).sendKeys(strSuppName);
+    	
+    	driver.findElement(By.id(pr.getProperty("UOMinStockCreation"))).click();
+    	Select uomlist = new Select(driver.findElement(By.id(pr.getProperty("UOMinStockCreation"))));
+    	uomlist.selectByVisibleText(strUOM);
+    	
+    	driver.findElement(By.id(pr.getProperty("pp"))).sendKeys(strpp);
+    	
+    	driver.findElement(By.id(pr.getProperty("sp"))).sendKeys(strsp);
+    	
+    	driver.findElement(By.id(pr.getProperty("notes"))).sendKeys(strnotes);
+    	
+    	driver.findElement(By.id(pr.getProperty("AddCategory"))).click();
+    	
+    	driver.findElement(By.xpath(pr.getProperty("OkBtn"))).click();
+    	
+    	actVal=driver.findElement(By.xpath(pr.getProperty("success"))).getText();
+    	
+    	driver.findElement(By.xpath(pr.getProperty("OkBtn"))).click();
+    	
+    	if (actVal.equalsIgnoreCase(expVal)) {
+			return "Pass";
+		}
+    	
+    	else{
+    		return "Fail";
+    	}
+    }
+
+    /*
+     *  Method Name:stock_Supplier_Creation
+     */
+    public static void stock_Supplier_Creation(String strSuppName,String strAddr,String strCity,String strCoun,String strcontper,String strphno,String stremail,String strMobNo,String strnotes){
+    	driver.findElement(By.linkText(pr.getProperty("supp"))).click();
+    	
+    	driver.findElement(By.xpath(pr.getProperty("AddOfUom"))).click();
+    	
+    	driver.findElement(By.id(pr.getProperty("SuppName"))).sendKeys(strSuppName);
+    	
+    	driver.findElement(By.id(pr.getProperty("Addr"))).sendKeys(strAddr);
+    	
+    	driver.findElement(By.id(pr.getProperty("city"))).sendKeys(strCity);
+    	
+    	driver.findElement(By.id(pr.getProperty("coun"))).sendKeys(strCoun);
+    	
+    	driver.findElement(By.id(pr.getProperty("contper"))).sendKeys(strcontper);
+    	
+    	driver.findElement(By.id(pr.getProperty("phno"))).sendKeys(strphno);
+    	
+    	driver.findElement(By.id(pr.getProperty("email"))).sendKeys(stremail);
+    	
+    	driver.findElement(By.id(pr.getProperty("MobNo"))).sendKeys(strMobNo);
+    	
+    	driver.findElement(By.id(pr.getProperty("notes"))).sendKeys(strnotes);
+    	
+    	driver.findElement(By.id(pr.getProperty("AddCategory"))).click();
+    	
+    	driver.findElement(By.xpath(pr.getProperty("OkBtn"))).click();
+    	
+    	driver.findElement(By.xpath(pr.getProperty("OkBtn"))).click();
+    	
+    	
+    }
+}
