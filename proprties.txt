@@ -1,0 +1,95 @@
+#####ERP Stock Accounting#######
+
+    strUrl=http://webapp.qedgetech.com
+
+#properties of Login Page UI Elements
+  # ID property of User Name
+    uname=username
+  # ID property of Password
+    pword=password
+  # ID property of Login Button  
+    LoginBtn=btnsubmit
+  # ID property of Reset Button
+    ResetBtn=btnreset
+  # XPath property of Forgot Password link
+    ForgotPwd=.//*[@id='msLoginDialog']/div/div/div[3]/div/a[1]  
+  # XPath property of Register link  
+    register=.//*[@id='msLoginDialog']/div/div/div[3]/div/a[2]
+    
+#properties of Stock Accounting Home page UI elements
+  # linkText Property of Stock Item
+    StkItem=Stock Items
+  # linkText Property of Stock Categories  
+    StkCat=Stock Categories
+  # linkText Property of Unit of Measurement
+    UoM=Unit of Measurement
+  # linkText Property of Suppliers
+    supp=Suppliers
+  # ID property of Logout
+    logout=logout
+  # Xpath for Logout Confirmation OK Button
+    LogoutConfirmOk=.//button[@class='ajs-button btn btn-primary'] 
+
+#properties of Stock Categories page UI elements    
+  # XPath of Add(+) in Stock Categories
+    add=.//*[@id='ewContentColumn']/div[3]/div[1]/div[1]/div[1]/div[1]/a
+ 
+#properties of Stock Categories Creation page UI elements   
+  # ID property of Category Name
+    CategoryName=x_Category_Name
+  # ID property of Add Button  
+    AddCategory=btnAction
+  # ID property of Cancel Button   
+    CancelCategory=btnCancel
+  # XPath property of OK Button in Confirm alert
+    OkBtn=.//button[@class='ajs-button btn btn-primary']
+  # xpath for Successfully Added Message
+    success=.//div[@class='alert alert-success ewSuccess']
+    
+#properties of Unit of Measurement page UI elements    
+  # XPath of Add(+) in Unit of Measurement
+    AddOfUom=.//span[@class='glyphicon glyphicon-plus ewIcon']
+    
+#properties of Unit of Measurement Creation page UI elements
+  # ID for UOM ID
+    UOMID=x_UOM_ID
+  # ID for UOM Description
+    UOMDesc=x_UOM_Description
+    
+#Properties of Stock Items Creation Page UI Elements
+  # ID for Category
+    Cate=x_Category
+  # ID for Supplier Number
+    SuppNo=x_Supplier_Number
+  # Id for Stock Name
+    StockName=x_Stock_Name
+  # ID for UOM
+    UOMinStockCreation=x_Unit_Of_Measurement
+  # ID for Purchasing Price
+    pp=x_Purchasing_Price
+  # ID for Selling Price
+    sp=x_Selling_Price
+  # ID for Notes
+    notes=x_Notes
+    
+#Properties of Suppliers Creation Page UI Elements
+  # ID of Supplier Name
+    SuppName=x_Supplier_Name
+  # ID of Address
+    Addr=x_Address
+  # ID of City
+    city=x_City
+  # Id of Country
+    coun=x_Country
+  # ID of Contact Person
+    contper=x_Contact_Person
+  # ID of Phone_Number  
+    phno=x_Phone_Number
+  # ID of Email
+    email=x__Email
+  # ID of Mobile_Number
+    MobNo=x_Mobile_Number
+  # ID of x_Notes                     
+    # refer to Stock Item Notes
+    
+               
