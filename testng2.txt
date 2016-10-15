@@ -1,0 +1,51 @@
+package com.stockAcc.Test;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import com.stockAcc.Master.ERP_StockMaster_TestNG;
+
+public class stock_Cat_Creation_Testng extends ERP_StockMaster_TestNG{
+	public static String expVal,actVal;
+	public static String prPath="D:\\ERP_StockAccounting\\Stock_Accounting\\src\\com\\stockAcc\\properties\\ERP_stockAcc.properties";
+	public static FileInputStream fi;
+	public static Properties pr;
+	
+	@Test
+	public void stk_Cat_Creation() throws IOException{
+		fi = new FileInputStream(prPath);
+		pr = new Properties();
+		pr.load(fi);
+		
+		expVal="Add succeeded";
+    	WebElement stkitem = driver.findElement(By.linkText(pr.getProperty("StkItem")));
+    	Actions act = new Actions(driver);
+    	act.moveToElement(stkitem).build().perform();
+    	
+    	driver.findElement(By.linkText(pr.getProperty("StkCat"))).click();
+    	driver.findElement(By.xpath(pr.getProperty("add"))).click();
+    	driver.findElement(By.id(pr.getProperty("CategoryName"))).sendKeys("combo");
+    	
+    	driver.findElement(By.id(pr.getProperty("AddCategory"))).click();
+    	driver.findElement(By.xpath(pr.getProperty("OkBtn"))).click();
+    	
+    	    	    	
+    	actVal=driver.findElement(By.xpath(pr.getProperty("success"))).getText();
+    	
+    	driver.findElement(By.xpath(pr.getProperty("OkBtn"))).click();
+    	
+    	Assert.assertEquals(actVal, expVal, "Stock Cat Not Created");
+		
+	}
+
+}

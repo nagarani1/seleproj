@@ -1,0 +1,80 @@
+package com.stockAcc.Master;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.Assert;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
+
+public class ERP_StockMaster_TestNG {
+	public static WebDriver driver;
+	public static String expVal,actVal;
+	public static String prPath="D:\\ERP_StockAccounting\\Stock_Accounting\\src\\com\\stockAcc\\properties\\ERP_stockAcc.properties";
+	public static FileInputStream fi;
+	public static Properties pr;
+    
+	@BeforeSuite
+	public void stock_Launch() throws IOException{
+		
+		fi = new FileInputStream(prPath);
+		pr = new Properties();
+		pr.load(fi);
+		expVal="Login";
+		
+		driver = new FirefoxDriver();
+		driver.manage().timeouts().implicitlyWait(40, TimeUnit.SECONDS);
+		driver.get(pr.getProperty("strUrl"));
+		driver.manage().window().maximize();
+		actVal=driver.findElement(By.id(pr.getProperty("LoginBtn"))).getText();
+		
+		Assert.assertEquals(actVal, expVal, "Launch Failed");
+	}
+	
+	@BeforeTest
+	public void stock_Login(){
+		
+        expVal="Administrator";
+		
+		WebElement un=driver.findElement(By.id(pr.getProperty("uname")));
+		un.clear();
+		un.sendKeys("admin");
+		
+		WebElement pw=driver.findElement(By.id(pr.getProperty("pword")));
+		pw.clear();
+		pw.sendKeys("master");
+		
+		driver.findElement(By.id(pr.getProperty("LoginBtn"))).click();
+		actVal=driver.findElement(By.xpath(".//*[@id='msUserName']/font/strong")).getText();
+		
+		Assert.assertEquals(actVal, expVal, "Login Failed");
+	}
+	
+	@AfterTest
+	public void stock_Logout() throws InterruptedException{
+		
+        expVal="Login";
+		
+		driver.findElement(By.linkText("Dashboard")).click();
+		driver.findElement(By.id(pr.getProperty("logout"))).click();
+		driver.findElement(By.xpath(pr.getProperty("LogoutConfirmOk"))).click();
+		 Thread.sleep(4000);
+        actVal=driver.findElement(By.id(pr.getProperty("LoginBtn"))).getText();
+        Assert.assertEquals(actVal, expVal, "Logout Failed");
+	}
+	
+	@AfterSuite
+	public void stock_Close(){
+		
+		driver.close();
+	}
+}
